@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -12,5 +13,10 @@ int main()
     {
         cout << word << " ";
     }
-    cout << endl;
+    cout << endl << flush;
+
+    ofstream myfile;
+    myfile.open ("/tmp/example.txt");
+    myfile << "Writing this to a file.\n";
+    myfile.close();
 }
