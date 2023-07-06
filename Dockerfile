@@ -27,6 +27,7 @@ COPY ./src/ /usr/src/app/
 WORKDIR /usr/src/app
 
 RUN clang++ -o myapp app.cpp
+RUN clang++ -O3 -c -emit-llvm -target x86_64-unknown-linux-gnu app.cpp -o myapp.bc
 
 #############################################
 
@@ -37,3 +38,15 @@ WORKDIR /root
 COPY --from=build-with-clang /usr/src/app/myapp ./
 
 CMD ["./myapp"]
+
+#############################################
+
+FROM ghcr.io/graalvm/graalvm-ce:22.3.2 AS exec-with-graalvm
+
+RUN gu install llvm
+
+WORKDIR /root
+
+COPY --from=build-with-clang /usr/src/app/myapp.bc ./
+
+CMD ["lli", "./myapp.bc"]
